@@ -101,7 +101,6 @@ errorMsg.lastName = document.getElementById('lastNameErrorMsg');
 errorMsg.address = document.getElementById('addressErrorMsg');
 errorMsg.city = document.getElementById('cityErrorMsg');
 errorMsg.email = document.getElementById('emailErrorMsg');
-console.log(order);
 order.addEventListener("click", (e) => {
   e.preventDefault()
   let contact = {
@@ -120,21 +119,24 @@ order.addEventListener("click", (e) => {
       errorMsg[field].innerHTML = ``
     }
   }
-  let LSproducts = localStorage.getItem("products");
-  for (var products = 0; products < products.length; products++) {
-    LSproducts[products]._id
+  let products = [];
+  for (listId of arrayProductsInCart) {
+    products.push(listId._id)
   }
   if (check) {
-    fetch("http://localhost:3000/api/order", {
-    Method: "POST",
-    Headers: { 
-    'Accept': 'application/json', 
-    'Content-Type': 'application/json' 
+    fetch("http://localhost:3000/api/products/order", {
+    method: "POST",
+    headers: {
+      'Accept': 'application/json',
+      'Content-Type': 'application/json',
     },
-      body: JSON.stringify({
-        contact: contact,
-        products: products
-      })
-    });
+      body: JSON.stringify({ contact, products }),
+    })
+    .then((res) => res.json())
+    .then((data) => {
+      localStorage.setItem("order", JSON.stringify(data));
+      document.location.href = "confirmation.html";
+    })
+    .catch((erreur) => alert("Une erreur est survenue"));
   }
 })
