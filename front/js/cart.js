@@ -1,7 +1,14 @@
+// On récupère les éléments du LocalStorage
+
 let arrayProductsInCart = JSON.parse(localStorage.getItem("products")) || [];
-console.log(arrayProductsInCart)
+
+// On met dans l'ordre les produits du panier par ordre de "l'id"
+
 arrayProductsInCart.sort((a, b) => a._id > b._id ?-1:1);
 var section = document.getElementById("cart__items");
+
+// On créer une boucle pour afficher les caractéristiques des produits
+
 for(var i = 0; i < arrayProductsInCart.length; i++) {
     section.innerHTML += `<article class="cart__item" data-id="${arrayProductsInCart[i]._id}" data-color="${arrayProductsInCart[i].colors}">
     <div class="cart__item__img">
@@ -25,6 +32,9 @@ for(var i = 0; i < arrayProductsInCart.length; i++) {
       </div>
     </article>`
     }
+
+    // Fonction pour calculer le total du prix et de la quantité pour ensuite les affichées
+
 function displaytotal() {
   var cart = JSON.parse(localStorage.getItem("products"));
   let totalQuantity = 0;
@@ -41,6 +51,9 @@ function displaytotal() {
   price.innerHTML = totalPrice;
 }
 displaytotal()
+
+// Fonction pour supprimer un article du panier
+
 function deleteItem() {
   let btnDelete = document.querySelectorAll(".deleteItem");
   for(var d = 0; d < btnDelete.length; d++) {
@@ -64,6 +77,9 @@ function deleteItem() {
   }
 }
 deleteItem()
+
+// Fonction pour actualiser le panier quand on supprime un article ou que l'on augmente la quantité d'un produit
+
 function modifItem() {
   let modifQuantity = document.querySelectorAll(".itemQuantity");
   for(var d = 0; d < modifQuantity.length; d++) {
@@ -89,6 +105,7 @@ function modifItem() {
 modifItem()
 
 const order = document.getElementById("order");
+
 let pattern = {};
 pattern.firstName = /^(([a-zA-ZÀ-ÿ]+[\s\-]{1}[a-zA-ZÀ-ÿ]+)|([a-zA-ZÀ-ÿ]+))$/;
 pattern.lastName = /^(([a-zA-ZÀ-ÿ]+[\s\-]{1}[a-zA-ZÀ-ÿ]+)|([a-zA-ZÀ-ÿ]+))$/;
@@ -101,6 +118,9 @@ errorMsg.lastName = document.getElementById('lastNameErrorMsg');
 errorMsg.address = document.getElementById('addressErrorMsg');
 errorMsg.city = document.getElementById('cityErrorMsg');
 errorMsg.email = document.getElementById('emailErrorMsg');
+
+// On ajoute un "event" pour vérifier que le formulaire est bien remplit et confirmer la commande
+
 order.addEventListener("click", (e) => {
   e.preventDefault()
   let contact = {
@@ -120,9 +140,15 @@ order.addEventListener("click", (e) => {
     }
   }
   let products = [];
+  
+  // Une fois le panier finaliser on fait une boucle pour sélectionner les ID des produits
+
   for (listId of arrayProductsInCart) {
     products.push(listId._id)
   }
+
+  // SI check est true alors on envoie le formulaire et le panier
+
   if (check) {
     fetch("http://localhost:3000/api/products/order", {
     method: "POST",
@@ -134,8 +160,7 @@ order.addEventListener("click", (e) => {
     })
     .then((res) => res.json())
     .then((data) => {
-      localStorage.setItem("order", JSON.stringify(data));
-      document.location.href = "confirmation.html";
+      document.location.href = "confirmation.html?id=" + data.orderId;
     })
     .catch((erreur) => alert("Une erreur est survenue"));
   }
