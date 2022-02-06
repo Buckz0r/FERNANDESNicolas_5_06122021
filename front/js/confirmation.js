@@ -1,6 +1,5 @@
-function entierAleatoire(min, max) {
-    return Math.floor(Math.random() * (max - min + 1)) + min;
-  }
+  // On créer le numéro de commande
   const orderId = document.getElementById("orderId");
-  let numberOrder = entierAleatoire(1000000000, 574102410652);
-  orderId.innerHTML += `${numberOrder}`
+  let params = new URL(document.location).searchParams;
+  let id = params.get("id");
+  orderId.innerHTML = id
