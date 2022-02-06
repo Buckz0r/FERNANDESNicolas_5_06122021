@@ -7,6 +7,9 @@ const productDescription = document.querySelector("#description");
 const productPrice = document.querySelector("#price");
 const productselect = document.querySelector("#colors");
 const productQuantity = document.querySelector("#quantity")
+
+// Fonction pour afficher les détails du produit
+
 function getArticles() {
     fetch("http://localhost:3000/api/products/"+id)
         .then(function(res) {
@@ -29,6 +32,9 @@ function getArticles() {
     })
 }
 getArticles()
+
+// Fonction pour ajouter un produit au panier
+
 function addtocart(article) {
     const addtocart = document.querySelector("#addToCart");
     addtocart.addEventListener("click", function(){
@@ -48,7 +54,7 @@ function addtocart(article) {
             console.log(article);
         }
         
-        // Si le localStorage existe, on récupère son contenu, on l'insère dans le tableau arrayProductsCart, puis on le renvoit vers le localStorage avec le nouveau produit ajouté.
+        // Si le LocalStorage existe, on récupère son contenu, on l'insère dans le tableau arrayProductsCart, puis on le renvoit vers le localStorage avec le nouveau produit ajouté.
         
         let arrayProductsInCart = [];
         if (localStorage.getItem("products")) {
@@ -61,7 +67,7 @@ function addtocart(article) {
                 return
             }
         }
-        // Si le LS est vide, on le crée avec le produit ajouté
+        // Si le LocalStorage est vide, on le crée avec le produit ajouté
 
         arrayProductsInCart.push(article);
         localStorage.setItem("products", JSON.stringify(arrayProductsInCart));
