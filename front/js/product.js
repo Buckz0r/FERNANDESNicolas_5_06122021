@@ -41,20 +41,21 @@ function addtocart(article) {
         if (!productselect.value) {
             alert ("Veuillez choisir une couleur !")
             return
-        } if (productQuantity.value >= 1 && productQuantity.value <= 100) {
-            article = {
-                name: article.name,
-                price: article.price,
-                colors: productselect.value,
-                quantity: parseInt(productQuantity.value),
-                imageUrl: article.imageUrl,
-                altTxt: article.altTxt,
-                _id: id,
-            };
-            console.log(article);
+        } if (!(parseInt(productQuantity.value) >= 1 && parseInt(productQuantity.value) <= 100)) {
+            alert ("Veuillez saisir une quantité !")
+            return
         }
-        
-        // Si le LocalStorage existe, on récupère son contenu, on l'insère dans le tableau arrayProductsCart, puis on le renvoit vers le localStorage avec le nouveau produit ajouté.
+        article = {
+            name: article.name,
+            colors: productselect.value,
+            quantity: parseInt(productQuantity.value),
+            imageUrl: article.imageUrl,
+            altTxt: article.altTxt,
+            _id: id,
+        };
+
+        // Si le LocalStorage existe, on récupère son contenu,
+        // on l'insère dans le tableau arrayProductsCart, puis on le renvoit vers le localStorage avec le nouveau produit ajouté.
         
         let arrayProductsInCart = [];
         if (localStorage.getItem("products")) {
@@ -71,6 +72,5 @@ function addtocart(article) {
 
         arrayProductsInCart.push(article);
         localStorage.setItem("products", JSON.stringify(arrayProductsInCart));
-        console.log(localStorage)
     })
 }

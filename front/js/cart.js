@@ -10,20 +10,29 @@ var section = document.getElementById("cart__items");
 // On créer une boucle pour afficher les caractéristiques des produits
 
 for(var i = 0; i < arrayProductsInCart.length; i++) {
-    section.innerHTML += `<article class="cart__item" data-id="${arrayProductsInCart[i]._id}" data-color="${arrayProductsInCart[i].colors}">
+  const colors = arrayProductsInCart[i].colors;
+  const quantity = arrayProductsInCart[i].quantity;
+  fetch("http://localhost:3000/api/products/"+ arrayProductsInCart[i]._id)
+  .then(function(res) {
+      if(res.ok) {
+          return res.json();
+      }
+  })
+  .then(function(article) {
+    section.innerHTML += `<article class="cart__item" data-id="${article._id}" data-color="${colors}">
     <div class="cart__item__img">
-      <img src="${arrayProductsInCart[i].imageUrl}" alt="${arrayProductsInCart[i].altTxt}">
+      <img src="${article.imageUrl}" alt="${article.altTxt}">
     </div>
     <div class="cart__item__content">
       <div class="cart__item__content__description">
-        <h2>${arrayProductsInCart[i].name}</h2>
-        <p>${arrayProductsInCart[i].colors}</p>
-        <p>${arrayProductsInCart[i].price} €</p>
+        <h2>${article.name}</h2>
+        <p>${colors}</p>
+        <p>${article.price} €</p>
       </div>
       <div class="cart__item__content__settings">
         <div class="cart__item__content__settings__quantity">
           <p>Qté :</p>
-          <input type="number" class="itemQuantity" name="itemQuantity" min="1" max="100" value="${arrayProductsInCart[i].quantity}">
+          <input type="number" class="itemQuantity" name="itemQuantity" min="1" max="100" value="${quantity}">
         </div>
         <div class="cart__item__content__settings__delete">
           <p class="deleteItem">Supprimer</p>
@@ -31,7 +40,8 @@ for(var i = 0; i < arrayProductsInCart.length; i++) {
         </div>
       </div>
     </article>`
-    }
+  })
+}
 
     // Fonction pour calculer le total du prix et de la quantité pour ensuite les affichées
 
@@ -42,38 +52,50 @@ function displaytotal() {
   let totalPrice = 0;
   let price = document.getElementById("totalPrice")
   for(var q = 0; q < cart.length; q++) {
-    let quantityInCart = cart[q].quantity;
-    let priceInCart = cart[q].price * cart[q].quantity;
+    if (cart.length != null) {
+      alert("Votre panier est vide !")
+       return
+    }
+    let t = cart[q].quantity;
+  fetch("http://localhost:3000/api/products/"+ cart[q]._id)
+  .then(function(res) {
+      if(res.ok) {
+          return res.json();
+      }
+  })
+  .then(function(article) {
+    let quantityInCart = t;
+    let priceInCart = article.price * t;
     totalPrice += priceInCart;
     totalQuantity += quantityInCart;
+    quantity.innerHTML = totalQuantity;
+    price.innerHTML = totalPrice;
+  })
   }
-  quantity.innerHTML = totalQuantity;
-  price.innerHTML = totalPrice;
 }
 displaytotal()
+
 
 // Fonction pour supprimer un article du panier
 
 function deleteItem() {
   let btnDelete = document.querySelectorAll(".deleteItem");
-  for(var d = 0; d < btnDelete.length; d++) {
+  for (var d = 0; d < btnDelete.length; d++) {
     btnDelete[d].addEventListener('click', (e) => {
-      var article = e.target.closest("article")
+      var article = e.target.closest("article");
       let id = article.dataset.id;
       let colors = article.dataset.color;
-      console.log(id);
-      console.log(colors);
       let arrayProductsInCart = JSON.parse(localStorage.getItem("products"));
-      for(var i = 0; i < arrayProductsInCart.length; i++) {
-          if (arrayProductsInCart[i]._id == id && arrayProductsInCart[i].colors == colors) {
-            arrayProductsInCart.splice(i, 1)
-              localStorage.setItem("products", JSON.stringify(arrayProductsInCart));
-              article.remove();
-              displaytotal()
-              return
-          }
+      for (var i = 0; i < arrayProductsInCart.length; i++) {
+        if (arrayProductsInCart[i]._id == id && arrayProductsInCart[i].colors == colors) {
+          arrayProductsInCart.splice(i, 1);
+          localStorage.setItem("products", JSON.stringify(arrayProductsInCart));
+          article.remove();
+          displaytotal();
+          return;
+        }
       }
-    })
+    });
   }
 }
 deleteItem()
@@ -88,8 +110,6 @@ function modifItem() {
       let id = article.dataset.id;
       let colors = article.dataset.color;
       let quantity = parseInt(e.target.value);
-      console.log(id);
-      console.log(colors);
       let arrayProductsInCart = JSON.parse(localStorage.getItem("products"));
       for(var i = 0; i < arrayProductsInCart.length; i++) {
           if (arrayProductsInCart[i]._id == id && arrayProductsInCart[i].colors == colors) {
