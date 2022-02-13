@@ -40,6 +40,8 @@ for(var i = 0; i < arrayProductsInCart.length; i++) {
         </div>
       </div>
     </article>`
+    deleteItem()
+    modifItem()
   })
 }
 
@@ -51,11 +53,10 @@ function displaytotal() {
   let quantity = document.getElementById("totalQuantity");
   let totalPrice = 0;
   let price = document.getElementById("totalPrice")
+  if (cart === null) {
+    alert("Votre panier est vide")
+  } else {
   for(var q = 0; q < cart.length; q++) {
-    if (cart.length != null) {
-      alert("Votre panier est vide !")
-       return
-    }
     let t = cart[q].quantity;
   fetch("http://localhost:3000/api/products/"+ cart[q]._id)
   .then(function(res) {
@@ -70,7 +71,8 @@ function displaytotal() {
     totalQuantity += quantityInCart;
     quantity.innerHTML = totalQuantity;
     price.innerHTML = totalPrice;
-  })
+    })
+  }
   }
 }
 displaytotal()
